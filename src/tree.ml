@@ -74,38 +74,28 @@ else Node(left,treeVal,right)
 
 
 
-let rec tree_init f v1 v2 = match (f v1 v2) with 
-| Some ((a,b),v2,(c,d)) -> Node((tree_init f a b ),v2,(tree_init f c d) )
-| None -> Leaf
 
 
-let rec splitHelp lst v acc = match lst with
-[] -> ([],[])
-| curr::rest -> if (curr = v) then 
-(acc,rest)
-else splitHelp rest v (acc @ [curr])
 
-let rec splitHelp2 lst v acc = match lst with
+
+
+let treeG a b = let rec splitHelp lst v acc =
+  match lst with
+  [] -> ([],[])
+  | curr::rest -> if (curr = v) then 
+  (acc,rest)
+  else splitHelp rest v (acc @ [curr]) in
+let split lst v = splitHelp lst v [] in let rec splitHelp2 lst v acc = match lst with
 [] -> ([],[])
 | curr::rest -> match curr with (a,b) -> if (a=v) then
 (acc @ [curr],rest)
-else splitHelp2 rest v (acc @ [curr])
-
-
+else splitHelp2 rest v (acc @ [curr]) in
+let split2 lst v = match (splitHelp2 (indexTup lst) v []) with (a,b) ->
+  ( (unIdxTup a),(unIdxTup b) ) in
 let rec countLst lst = match lst with
 [] -> 0
-| curr::rest -> 1 + countLst rest
-
-
-let rec split lst v = splitHelp lst v []
-
-let rec split2 lst v = match (splitHelp2 (indexTup lst) v []) with (a,b) ->
-( (unIdxTup a),(unIdxTup b) )
-
-
-
-
-let treeG a b = match a with
+| curr::rest -> 1 + countLst rest in
+  match a with
 [] -> None
 | curr::rest -> match (split b curr) with (lst1,lst2) ->
   match (split2 rest (countLst lst1)) with (lst3,lst4) ->
@@ -116,7 +106,10 @@ Some((lst3,lst1),curr,(lst4,lst2))
 
  
 
-let from_pre_in pre in_ord = tree_init treeG pre in_ord
+let from_pre_in pre in_ord = let rec tree_init f v1 v2 = match (f v1 v2) with 
+| Some ((a,b),v2,(c,d)) -> Node((tree_init f a b ),v2,(tree_init f c d) )
+| None -> Leaf in
+  tree_init treeG pre in_ord
 
 
 
